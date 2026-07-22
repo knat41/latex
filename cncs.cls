@@ -7,6 +7,8 @@
 \DeclareBoolOption[true]{thai}
 \DeclareBoolOption[false]{twoside}
 \DeclareBoolOption[true]{codenumbers}
+\DeclareBoolOption[false]{showanswers}
+\DeclareStringOption[thai]{choicestyle}
 \ProcessKeyvalOptions*
 
 % Load Base Class
@@ -36,6 +38,11 @@
 
 % 4b. Thai font loading (bound to the `thai` option; previously declared but never used)
 \ifcncs@thai
+  % Without this, XeTeX treats an entire Thai paragraph as one unbreakable
+  % "word" (Thai has no spaces between words) and text overflows the page
+  % margin instead of wrapping to a new line.
+  \XeTeXlinebreaklocale "th"
+  \XeTeXlinebreakskip = 0pt plus 1pt
   \RequirePackage{fontspec}
   \newif\ifcncs@fontfound \cncs@fontfoundfalse
   \IfFontExistsTF{TH Sarabun New}
@@ -74,7 +81,7 @@
 \newcommand{\studentinfo}{%
   \noindent
   \begin{tabular}{@{}p{0.55\textwidth} p{0.25\textwidth} p{0.15\textwidth}@{}}
-    \textbf{ชื่อ-สกุล:} \dotfill & \textbf{ห้อง:} \dotfill & \textbf{เลขที่:} \dotfill
+    \textbf{ชื่อ-สกุล} \dotfill & \textbf{ห้อง} \dotfill & \textbf{เลขที่} \dotfill
   \end{tabular}
   \vspace{0.5em}
   \par\noindent\hrule
