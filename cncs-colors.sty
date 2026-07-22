@@ -1,0 +1,39 @@
+\ProvidesPackage{cncs-colors}
+
+\RequirePackage{xcolor}
+\RequirePackage{ifthen}
+
+\ifthenelse{\equal{\cncs@theme}{blue}}{
+  \definecolor{cncsprimary}{HTML}{003366}
+  \definecolor{cncssecondary}{HTML}{4A90E2}
+  \definecolor{cncsbg}{HTML}{F0F4F8}
+}{
+\ifthenelse{\equal{\cncs@theme}{green}}{
+  \definecolor{cncsprimary}{HTML}{2E7D32}
+  \definecolor{cncssecondary}{HTML}{81C784}
+  \definecolor{cncsbg}{HTML}{F1F8E9}
+}{
+\ifthenelse{\equal{\cncs@theme}{red}}{
+  \definecolor{cncsprimary}{HTML}{B71C1C}
+  \definecolor{cncssecondary}{HTML}{EF9A9A}
+  \definecolor{cncsbg}{HTML}{FDECEA}
+}{
+\ifthenelse{\equal{\cncs@theme}{purple}}{
+  \definecolor{cncsprimary}{HTML}{4A148C}
+  \definecolor{cncssecondary}{HTML}{B39DDB}
+  \definecolor{cncsbg}{HTML}{F3E5F5}
+}{
+\ifthenelse{\equal{\cncs@theme}{orange}}{
+  \definecolor{cncsprimary}{HTML}{E65100}
+  \definecolor{cncssecondary}{HTML}{FFB74D}
+  \definecolor{cncsbg}{HTML}{FFF3E0}
+}{
+  % unknown theme name -> fall back to blue, warn the author
+  \ClassWarning{cncs}{Unknown theme '\cncs@theme', falling back to blue. Valid themes: blue, green, red, purple, orange}
+  \definecolor{cncsprimary}{HTML}{003366}
+  \definecolor{cncssecondary}{HTML}{4A90E2}
+  \definecolor{cncsbg}{HTML}{F0F4F8}
+}}}}}
+
+\definecolor{cncsdark}{HTML}{212121}
+\definecolor{cncsalert}{HTML}{D32F2F}
