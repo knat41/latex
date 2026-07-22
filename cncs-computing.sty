@@ -1,0 +1,111 @@
+\ProvidesPackage{cncs-computing}
+
+\RequirePackage{tikz}
+\RequirePackage{array}
+\RequirePackage{listings}
+
+% 1. Source Code Settings
+% NOTE: plain \ttfamily (Latin Modern Mono) has no Thai glyphs. Worksheets in
+% this class routinely put Thai comments inside code blocks (see ตอนที่ 2's
+% Python example), so we fall back to the body's Thai-capable font for code
+% text. Trade-off: code no longer renders as true monospace, but Thai
+% comments inside \begin{cncscode} no longer throw missing-character errors.
+\lstset{
+  basicstyle=\normalfont\normalsize,
+  extendedchars=true,
+  keywordstyle=\color{cncsprimary}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{cncsalert},
+  identifierstyle=\color{cncsdark},
+  frame=single,
+  rulecolor=\color{gray!40},
+  backgroundcolor=\color{cncsbg!50},
+  breaklines=true,
+  showstringspaces=false,
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  xleftmargin=1.5em,
+  escapeinside={(*}{*)}
+}
+
+% \blank[width] — yellow fill-in-the-blank box for use INSIDE a cncscode
+% block. Must be wrapped in (* ... *) since code text is otherwise verbatim.
+% e.g.:  (*\blank*) = int(input("Input a : "))
+\newcommand{\blank}[1][2cm]{\fcolorbox{gray!50}{white}{\rule{0pt}{0.9em}\hspace*{#1}}}
+
+% Default line-number visibility comes from the `codenumbers` class option
+% (\documentclass[codenumbers=false]{cncs} to turn it off document-wide).
+\ifcncs@codenumbers
+  \lstset{numbers=left}
+\else
+  \lstset{numbers=none}
+\fi
+
+% \begin{cncscode}[Lang]    -> uses the document-wide default from codenumbers
+% \begin{cncscode*}[Lang]   -> flips numbering just for this one block
+\lstnewenvironment{cncscode}[1][C]{%
+  \lstset{language=#1}%
+}{}
+
+\lstnewenvironment{cncscode*}[1][C]{%
+  \lstset{language=#1}%
+  \ifcncs@codenumbers
+    \lstset{numbers=none}%
+  \else
+    \lstset{numbers=left}%
+  \fi
+}{%
+  \ifcncs@codenumbers
+    \lstset{numbers=left}%
+  \else
+    \lstset{numbers=none}%
+  \fi
+}
+
+% 2. Variable Table (สำหรับตอนที่ 1)
+\newenvironment{vartable}{%
+  \begin{center}
+  \begin{tabular}{|p{4cm}|p{6cm}|}
+    \hline
+    \textbf{ชื่อตัวแปร} & \textbf{ค่า} \\ \hline
+}{%
+  \hline
+  \end{tabular}
+  \end{center}
+}
+
+% 3. Trace Table
+\newenvironment{tracetable}[1]{%
+  \begin{center}
+  \begin{tabular}{|c|* {#1}{p{2cm}|}}
+    \hline
+    \textbf{Step} & 
+}{%
+  \hline
+  \end{tabular}
+  \end{center}
+}
+
+% 4. Binary Conversion Table
+\newcommand{\binarytable}{%
+  \begin{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+    128 & 64 & 32 & 16 & 8 & 4 & 2 & 1 \\ \hline
+    & & & & & & & \\ \hline
+  \end{tabular}
+  \end{center}
+}
+
+% 5. Memory Array Box
+\newcommand{\memorybox}[1]{%
+  \begin{center}
+  \begin{tikzpicture}
+    \foreach \val [count=\i from 0] in {#1} {
+      \draw[fill=cncsbg, draw=cncsprimary, thick] (\i*1.2, 0) rectangle (\i*1.2 + 1, 1);
+      \node at (\i*1.2 + 0.5, 0.5) {\texttt{\val}};
+      \node[below, font=\tiny\ttfamily] at (\i*1.2 + 0.5, 0) {[\i]};
+    }
+  \end{tikzpicture}
+  \end{center}
+}
