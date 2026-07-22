@@ -1,0 +1,30 @@
+\documentclass[theme=blue, thai]{cncs}
+\RequirePackage{cncs-computing}
+\begin{document}
+
+\activitysection{ตัวอย่าง: การใช้ Array}
+
+กำหนดตัวแปร array ต่อไปนี้
+\begin{cncscode}[C]
+int arr[5] = {10, 25, 3, 47, 8};
+\end{cncscode}
+
+จะได้ค่าในหน่วยความจำดังนี้
+\memorybox{10, 25, 3, 47, 8}
+
+\vspace{1em}
+\noindent ให้นักเรียนตอบคำถามต่อไปนี้
+\begin{cncscode}[C]
+for (int i = 0; i < 5; i++) {
+    printf("%d ", arr[i] * 2);
+}
+\end{cncscode}
+
+\noindent เติมผลลัพธ์ของ arr[i] * 2 ในแต่ละรอบ (trace table)
+\begin{tracetable}{5}
+ i=0 & i=1 & i=2 & i=3 & i=4 \\ \hline
+\end{tracetable}
+
+\answerline
+
+\end{document}
