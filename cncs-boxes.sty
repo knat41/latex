@@ -1,0 +1,55 @@
+\ProvidesPackage{cncs-boxes}
+
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{pgffor}
+
+\newtcolorbox{instruction}[1][คำชี้แจง]{%
+  colback=cncsbg,
+  colframe=cncsprimary,
+  fonttitle=\bfseries,
+  title=#1,
+  arc=2mm,
+  boxrule=1pt,
+  left=10pt, right=10pt, top=8pt, bottom=8pt
+}
+
+% NOTE: tcolorbox has no plain `style=dashed` key. A dashed frame needs the
+% `enhanced` skin plus a `frame style` override that sets the tikz dash pattern.
+\newcommand{\drawingbox}[2][วาดภาพ/ผังงานตรงนี้]{%
+  \begin{tcolorbox}[%
+    enhanced,
+    colback=white,
+    colframe=gray!40,
+    boxrule=1pt,
+    frame style={dash pattern=on 4pt off 3pt},
+    height=#2,
+    valign=center,
+    halign=center
+  ]
+    \color{gray!70}\itshape #1
+  \end{tcolorbox}
+}
+
+\newcommand{\answerline}{\par\vspace{0.5em}\noindent\hrulefill\par}
+\newcommand{\answerlines}[1]{%
+  \par\vspace{0.5em}
+  \foreach \i in {1,...,#1}{%
+    \noindent\hrulefill\par\vspace{0.6em}
+  }%
+}
+
+% \codeblank — placeholder box for students to write in code or a fill-in-the-blank
+% answer under a \cncscode listing. Solid frame + light code-like background,
+% distinct from \drawingbox (dashed, for diagrams/flowcharts).
+\newcommand{\codeblank}[2][เติมโค้ด/คำตอบตรงนี้]{%
+  \begin{tcolorbox}[%
+    colback=cncsbg!30,
+    colframe=gray!50,
+    boxrule=1pt,
+    height=#2,
+    valign=center,
+    halign=center
+  ]
+    \color{gray!70}\itshape #1
+  \end{tcolorbox}
+}
