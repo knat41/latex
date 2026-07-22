@@ -1,0 +1,78 @@
+\ProvidesPackage{cncs-exam}
+
+\RequirePackage{ifthen}
+\RequirePackage{array}
+
+% ============================================================
+% 1. Multiple choice (ก/ข/ค/ง หรือ 1/2/3/4 — ปรับได้ผ่าน choicestyle)
+% ============================================================
+
+\newcounter{cncsq}
+\newcounter{cncschoice}[cncsq]
+
+\newcommand{\resetchoices}{\setcounter{cncschoice}{0}}
+
+% แปลงเลขข้อ (1,2,3,...) เป็น ก,ข,ค,ง,... หรือ 1,2,3,... ตาม choicestyle
+% (\documentclass[..., choicestyle=numeric]{cncs} สลับเป็นตัวเลข, default คือ thai)
+\newcommand{\cncschoicelabel}{%
+  \stepcounter{cncschoice}%
+  \ifthenelse{\equal{\cncs@choicestyle}{numeric}}{%
+    \arabic{cncschoice}%
+  }{%
+    \ifcase\value{cncschoice}%
+    \or ก\or ข\or ค\or ง\or จ\or ฉ\or ช\or ซ\or ฌ\or ญ%
+    \else ?%
+    \fi
+  }%
+}
+
+% \choice{ข้อความ} — ตัวเลือกทั่วไป
+\newcommand{\choice}[1]{%
+  \par\noindent\cncschoicelabel.\ #1%
+}
+
+% \correct{ข้อความ} — ตัวเลือกที่ถูก จะทำตัวหนา+สีธีมก็ต่อเมื่อ showanswers=true เท่านั้น
+% (เมื่อ showanswers=false จะแสดงผลเหมือน \choice ทุกประการ ใช้ไฟล์เดียวกันได้ทั้งฉบับนักเรียน/เฉลย)
+\newcommand{\correct}[1]{%
+  \par\noindent
+  \ifcncs@showanswers
+    \textbf{\color{cncsprimary}\cncschoicelabel.\ #1}%
+  \else
+    \cncschoicelabel.\ #1%
+  \fi
+}
+
+% \begin{question} ... \end{question} — นับข้อและเว้นบรรทัดอัตโนมัติ
+\newenvironment{question}{%
+  \stepcounter{cncsq}%
+  \par\vspace{0.9em}\noindent\textbf{\arabic{cncsq}.}\enspace
+}{\par}
+
+% \begin{choices} ... \end{choices} — ครอบกลุ่มตัวเลือก รีเซ็ตตัวนับให้อัตโนมัติ
+\newenvironment{choices}{%
+  \resetchoices
+  \vspace{0.3em}
+}{\vspace{0.3em}}
+
+% ============================================================
+% 2. ตาราง Rubric (เกณฑ์ x ระดับคะแนน 4 ระดับ + ช่องคะแนนรวม)
+% ============================================================
+
+\newenvironment{rubric}{%
+  \small
+  \begin{center}
+  \begin{tabular}{|p{3.6cm}|p{2.6cm}|p{2.6cm}|p{2.6cm}|p{2.6cm}|c|}
+    \hline
+    \textbf{เกณฑ์การให้คะแนน} & \textbf{ดีมาก (4)} & \textbf{ดี (3)} & \textbf{พอใช้ (2)} & \textbf{ปรับปรุง (1)} & \textbf{คะแนน} \\
+    \hline
+}{%
+  \hline
+  \end{tabular}
+  \end{center}
+  \normalsize
+}
+
+% \rubrictotal{คะแนนเต็ม} — พิมพ์บรรทัดสรุปคะแนนรวม
+\newcommand{\rubrictotal}[1]{%
+  \par\vspace{0.5em}\noindent\textbf{คะแนนรวม:}\ \dotfill\ /\ #1
+}
