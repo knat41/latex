@@ -1,0 +1,172 @@
+\ProvidesPackage{cncs-pseudocode}
+
+\RequirePackage{algpseudocode}
+\RequirePackage{tcolorbox}
+
+% ---------------------------------------------------------------------------
+% Thai / English keyword sets for algpseudocode.
+%
+% algpseudocode does NOT have separate "\algorithmicendif", "\algorithmicendfor"
+% macros — \EndIf, \EndFor, etc. are auto-built by \algdef as
+% "\algorithmicend + \algorithmicif" (see algpseudocode.sty). So the only
+% macros that need redefining are the base keyword atoms below; "end if",
+% "end for", ... follow automatically once \algorithmicend and the matching
+% keyword are both redefined.
+%
+% \cncs@setthaikeywords / \cncs@setenglishkeywords are only ever invoked
+% inside a TeX group (see \pseudocode / \pseudocodethai below), so the
+% redefinition never leaks into a later block in the same document.
+% ---------------------------------------------------------------------------
+\newcommand{\cncs@setthaikeywords}{%
+  \algrenewcommand\algorithmicend{\textbf{จบ}}%
+  \algrenewcommand\algorithmicdo{\textbf{ทำ}}%
+  \algrenewcommand\algorithmicwhile{\textbf{ขณะที่}}%
+  \algrenewcommand\algorithmicfor{\textbf{สำหรับ}}%
+  \algrenewcommand\algorithmicforall{\textbf{สำหรับทุก}}%
+  \algrenewcommand\algorithmicloop{\textbf{วนซ้ำ}}%
+  \algrenewcommand\algorithmicrepeat{\textbf{ทำซ้ำ}}%
+  \algrenewcommand\algorithmicuntil{\textbf{จนกระทั่ง}}%
+  \algrenewcommand\algorithmicprocedure{\textbf{กระบวนการ}}%
+  \algrenewcommand\algorithmicfunction{\textbf{ฟังก์ชัน}}%
+  \algrenewcommand\algorithmicif{\textbf{ถ้า}}%
+  \algrenewcommand\algorithmicthen{\textbf{แล้ว}}%
+  \algrenewcommand\algorithmicelse{\textbf{มิฉะนั้น}}%
+  \algrenewcommand\algorithmicrequire{\textbf{นำเข้า:}}%
+  \algrenewcommand\algorithmicensure{\textbf{ผลลัพธ์:}}%
+  \algrenewcommand\algorithmicreturn{\textbf{คืนค่า}}%
+}
+
+% Restates algpseudocode's own English defaults explicitly, so the two
+% keyword sets sit side by side and stay easy to compare/edit together.
+\newcommand{\cncs@setenglishkeywords}{%
+  \algrenewcommand\algorithmicend{\textbf{end}}%
+  \algrenewcommand\algorithmicdo{\textbf{do}}%
+  \algrenewcommand\algorithmicwhile{\textbf{while}}%
+  \algrenewcommand\algorithmicfor{\textbf{for}}%
+  \algrenewcommand\algorithmicforall{\textbf{for all}}%
+  \algrenewcommand\algorithmicloop{\textbf{loop}}%
+  \algrenewcommand\algorithmicrepeat{\textbf{repeat}}%
+  \algrenewcommand\algorithmicuntil{\textbf{until}}%
+  \algrenewcommand\algorithmicprocedure{\textbf{procedure}}%
+  \algrenewcommand\algorithmicfunction{\textbf{function}}%
+  \algrenewcommand\algorithmicif{\textbf{if}}%
+  \algrenewcommand\algorithmicthen{\textbf{then}}%
+  \algrenewcommand\algorithmicelse{\textbf{else}}%
+  \algrenewcommand\algorithmicrequire{\textbf{Require:}}%
+  \algrenewcommand\algorithmicensure{\textbf{Ensure:}}%
+  \algrenewcommand\algorithmicreturn{\textbf{return}}%
+}
+
+% ---------------------------------------------------------------------------
+% Shared themed box (same visual language as \cncscode: primary-colour frame,
+% cncsbg background). \begin{algorithmic}[1] turns on line numbers, matching
+% cncscode's default numbered look.
+% ---------------------------------------------------------------------------
+\newtcolorbox{cncs@pseudobox}{%
+  colback=cncsbg!50,
+  colframe=cncsprimary,
+  boxrule=1pt,
+  arc=1mm,
+  left=8pt, right=8pt, top=4pt, bottom=4pt,
+  breakable
+}
+
+% \begin{pseudocode} ... \end{pseudocode}
+% Keywords in English (if/then/else/for/while/...); body text, variable
+% names, and \Comment{...} can still be typed in Thai.
+\newenvironment{pseudocode}{%
+  \begingroup
+  \cncs@setenglishkeywords
+  \cncs@pseudobox
+  \begin{algorithmic}[1]
+}{%
+  \end{algorithmic}
+  \endcncs@pseudobox
+  \endgroup
+}
+
+% \begin{pseudocodethai} ... \end{pseudocodethai}
+% Same box and numbering, but every control keyword is in Thai.
+\newenvironment{pseudocodethai}{%
+  \begingroup
+  \cncs@setthaikeywords
+  \cncs@pseudobox
+  \begin{algorithmic}[1]
+}{%
+  \end{algorithmic}
+  \endcncs@pseudobox
+  \endgroup
+}
+
+% ---------------------------------------------------------------------------
+% \begin{pseudosteps} ... \end{pseudosteps} — Thai-native numbered-outline
+% style, matching how Thai textbooks actually write pseudocode: nesting is
+% shown by decimal step numbers (4, 4.1, 4.2, ...), NOT by indentation +
+% "end if"/"end for" keywords the way algpseudocode (\pseudocode above) does.
+% There is no block-closing keyword at all in this style — a block simply
+% ends when the numbering returns to the parent level.
+%
+%   \begin{pseudosteps}
+%     \item ให้ $n$ \pcgets จำนวนข้อมูลในรายการ $L$
+%     \item ให้ $left$ \pcgets $1$
+%     \item ทำซ้ำ ขณะที่ $left \le right$
+%       \begin{pseudosubsteps}
+%         \item ให้ $mid$ \pcgets $(left+right)/2$ ปัดเศษทิ้ง
+%         \item ถ้า $x = target$ แล้ว ให้คืนค่าดัชนี $i$ เท่ากับ $mid$ และจบการทำงาน
+%       \end{pseudosubsteps}
+%     \item คืนคำตอบว่าไม่พบข้อมูล $target$ ในรายการ $L$
+%   \end{pseudosteps}
+%
+% \pcgets prints the assignment arrow (←) via math mode \leftarrow rather
+% than the literal Unicode glyph, so it never depends on the Thai font
+% having that character (the \texttt-in-Thai bug earlier this session was
+% exactly this kind of font/glyph mismatch — this sidesteps it entirely).
+%
+% \PCBegin / \PCEnd print a plain "เริ่มต้น" / "จบ" heading — OPTIONAL,
+% not part of the environment itself: some worked examples use them to
+% bookend the whole algorithm, some don't (both patterns appear in real
+% textbook material), so it's the author's call per problem, not forced.
+% Place them OUTSIDE \begin{pseudosteps}...\end{pseudosteps}, not inside —
+% a LaTeX list environment must start with \item, so \PCBegin{} (which
+% prints a \par) breaks the list machinery if it's the first thing inside:
+%
+%   \PCBegin
+%   \begin{pseudosteps}
+%     \item ...
+%   \end{pseudosteps}
+%   \PCEnd
+% ---------------------------------------------------------------------------
+\RequirePackage{enumitem}
+
+\newcommand{\pcgets}{\ensuremath{\leftarrow}}
+\newcommand{\PCBegin}{\par\noindent\textbf{เริ่มต้น}\par}
+\newcommand{\PCEnd}{\par\noindent\textbf{จบ}\par}
+
+\newenvironment{pseudosteps}{%
+  \cncs@pseudobox
+  \begin{enumerate}[label=\arabic*., leftmargin=1.8em, itemsep=0.3em, topsep=0.2em]
+}{%
+  \end{enumerate}
+  \endcncs@pseudobox
+}
+
+% Must be used INSIDE a \pseudosteps \item (i.e. genuinely nested), so it
+% picks up the parent step's number automatically via enumitem's own
+% depth-tracking (enumi at depth 1, enumii at depth 2) — no manual number
+% bookkeeping, so renumbering a step never desyncs the sub-step labels.
+\newenvironment{pseudosubsteps}{%
+  \begin{enumerate}[label=\arabic{enumi}.\arabic*, leftmargin=2.8em, itemsep=0.2em, topsep=0.2em]
+}{%
+  \end{enumerate}
+}
+
+% Third nesting level (3.1.1-style) — must be used INSIDE a \pseudosubsteps
+% \item, same depth-tracking mechanism (now enumi.enumii.self at depth 3).
+% Not needed often — keep nesting shallow where you can, it's easier for
+% students to follow — but the mechanism costs nothing extra to support
+% when a lesson genuinely needs it.
+\newenvironment{pseudosubsubsteps}{%
+  \begin{enumerate}[label=\arabic{enumi}.\arabic{enumii}.\arabic*, leftmargin=3.8em, itemsep=0.15em, topsep=0.15em]
+}{%
+  \end{enumerate}
+}
