@@ -57,6 +57,19 @@
   \algrenewcommand\algorithmicreturn{\textbf{return}}%
 }
 
+% \Input / \Output — friendlier aliases for \Require / \Ensure. "Require"
+% ("precondition") and "Ensure" ("postcondition") are the formal CS-textbook
+% terms, but "input"/"output" is the more familiar framing for a ม.5 student
+% meeting pseudocode for the first time. Both names work no matter which
+% keyword set is active (English or Thai — \algorithmicrequire/\algorithmicensure
+% get redefined by \cncs@setthaikeywords / \cncs@setenglishkeywords above, and
+% \Input/\Output just point at \Require/\Ensure, so they follow automatically).
+% Used the same way as \Require/\Ensure — bare, not with a brace argument:
+%   \Input $n > 0$
+%   \Output arr sorted in ascending order
+\newcommand{\Input}{\Require}
+\newcommand{\Output}{\Ensure}
+
 % ---------------------------------------------------------------------------
 % Shared themed box (same visual language as \cncscode: primary-colour frame,
 % cncsbg background). \begin{algorithmic}[1] turns on line numbers, matching
