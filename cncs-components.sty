@@ -1,0 +1,99 @@
+\ProvidesPackage{cncs-components}
+
+\RequirePackage{cncs-boxes}
+\RequirePackage{cncs-exam}
+
+% ---------------------------------------------------------------------------
+% Phase 1-2 components: \Objective, \Warmup, \Activity, \Question,
+% \Assessment, \Reflection.
+%
+% Each is a themed box (same colcback=cncsbg / colframe=cncsprimary language
+% as \instruction in cncs-boxes.sty) with a fixed Thai heading. Numbering is
+% NOT automatic — pass it yourself as the optional argument, e.g.
+% \Activity[2]{...} or \Activity[2: สำรวจอาร์เรย์]{...}. This is deliberate:
+% components are meant to live in their own standalone .tex file and get
+% \input into whichever worksheet needs them, in whatever order that
+% worksheet wants — an auto-counter would silently renumber content that was
+% written to be reused, which defeats the point.
+%
+% \Question is a themed WRAPPER around content — it does not replace the
+% `question` environment / \choice / \correct from cncs-exam.sty (which this
+% file now loads). For multiple-choice content, use \choice / \correct
+% *inside* \Question so the answer key still toggles with the class's
+% `showanswers` option:
+%
+%   \Question[1]{
+%     ข้อใดถูกต้อง
+%     \begin{choices}
+%       \choice{ตัวเลือกผิด}
+%       \correct{ตัวเลือกถูก}   % ตัวหนา+เน้นสีเฉพาะตอน showanswers=true
+%     \end{choices}
+%   }
+%
+% \Question เองแค่ให้กล่อง + label เอง ("คำถามที่ 1") — ไม่ได้เปิด
+% \begin{choices} ให้อัตโนมัติ เพราะไม่ใช่ทุก \Question จะเป็นปรนัย
+% (บาง Question เป็นแบบเขียนตอบเปิด บังคับ choices ทุกกล่องจะผิด)
+%
+% \cncs@compbox{ตัวแปรเก็บชื่อ default}{label}{เนื้อหา}
+%   label = "" (ไม่ใส่ [ ] เลย) -> ใช้ default title เฉย ๆ
+%   label = "2" หรือ "2: สำรวจอาร์เรย์" -> title จะเป็น "<default>ที่ <label>"
+% ---------------------------------------------------------------------------
+% ---------------------------------------------------------------------------
+% Plan-mode switch. Default FALSE — worksheet documents (cncs.cls) never set
+% this, so all six components render exactly as before (colored box). Only
+% cncs-lessonplan.cls sets \cncs@planmodetrue, which flips \Warmup, \Activity
+% and \Reflection over to a plain fixed-numbered paragraph matching the
+% school's official form (section 11.1/11.2/11.3) instead of a colored box —
+% same macro call in the component .tex file, different document, different
+% rendering. \Objective/\Question/\Assessment fall back to a plain labelled
+% paragraph too if ever used in plan mode (they don't have a fixed section
+% number in the official form, so no special-case title for them).
+% ---------------------------------------------------------------------------
+\newif\ifcncs@planmode
+\cncs@planmodefalse
+
+\newcommand{\cncs@compbox}[4]{%
+  \def\cncs@label{#2}%
+  \ifx\cncs@label\@empty
+    \def\cncs@title{#1}%
+  \else
+    \def\cncs@title{#1ที่ #2}%
+  \fi
+  \ifcncs@planmode
+    \par\vspace{0.6em}\noindent{\bfseries #4}%
+    \par\vspace{0.2em}\noindent#3\par
+  \else
+    \begin{tcolorbox}[
+      colback=cncsbg,
+      colframe=cncsprimary,
+      fonttitle=\bfseries,
+      title=\cncs@title,
+      arc=2mm,
+      boxrule=1pt,
+      left=10pt, right=10pt, top=8pt, bottom=8pt
+    ]
+      #3
+    \end{tcolorbox}
+  \fi
+}
+
+% \Objective[label]{เนื้อหา} — วัตถุประสงค์การเรียนรู้
+\newcommand{\Objective}[2][]{\cncs@compbox{วัตถุประสงค์การเรียนรู้}{#1}{#2}{วัตถุประสงค์การเรียนรู้}}
+
+% \Warmup[label]{เนื้อหา} — กิจกรรมนำเข้าสู่บทเรียน
+% (plan mode: หัวข้อ "11.1 ขั้นนำเข้าสู่บทเรียน" ตามแบบฟอร์มราชการ)
+\newcommand{\Warmup}[2][]{\cncs@compbox{กิจกรรมนำเข้าสู่บทเรียน}{#1}{#2}{11.1 ขั้นนำเข้าสู่บทเรียน}}
+
+% \Activity[label]{เนื้อหา} — กิจกรรม
+% (plan mode: หัวข้อ "11.2 ขั้นสอน" ตามแบบฟอร์มราชการ)
+\newcommand{\Activity}[2][]{\cncs@compbox{กิจกรรม}{#1}{#2}{11.2 ขั้นสอน}}
+
+% \Question[label]{เนื้อหา} — คำถาม/โจทย์ (สำหรับคลังข้อสอบ)
+\newcommand{\Question}[2][]{\cncs@compbox{คำถาม}{#1}{#2}{คำถาม}}
+
+% \Assessment[label]{เนื้อหา} — การประเมินผล
+\newcommand{\Assessment}[2][]{\cncs@compbox{การประเมินผล}{#1}{#2}{การประเมินผล}}
+
+% \Reflection[label]{เนื้อหา} — สะท้อนคิด/ทบทวนบทเรียน
+% (plan mode: หัวข้อ "11.3 ขั้นสรุป" ตามแบบฟอร์มราชการ)
+\newcommand{\Reflection}[2][]{\cncs@compbox{สะท้อนคิด}{#1}{#2}{11.3 ขั้นสรุป}}
